@@ -19,7 +19,7 @@ const upload = multer({
 });
 
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static("."));
 
 const styles = {
   "Cartoon":
@@ -136,8 +136,8 @@ ${voice}
 
 app.get("*", (req, res) => {
   res.sendFile(
-    new URL("./public/index.html", import.meta.url).pathname
-  );
+  new URL("./index.html", import.meta.url).pathname
+);
 });
 
 app.listen(PORT, () => {

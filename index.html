@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KahaniToon - AI Story Video</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #fff3e0, #f3e5f5);
+      color: #222;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 42px;
+      font-weight: bold;
+      color: #7b2cbf;
+    }
+
+    .tagline {
+      color: #666;
+      font-size: 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      font-size: 16px;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #7b2cbf;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 15px;
+      border: 2px dashed #bbb;
+      border-radius: 12px;
+      background: #fafafa;
+    }
+
+    .preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .preview img {
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 2px solid #7b2cbf;
+    }
+
+    .styles {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .style {
+      padding: 12px 20px;
+      border: 2px solid #ddd;
+      border-radius: 25px;
+      cursor: pointer;
+      background: white;
+    }
+
+    .style.active {
+      background: #7b2cbf;
+      color: white;
+      border-color: #7b2cbf;
+    }
+
+    button {
+      width: 100%;
+      padding: 17px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #7b2cbf, #e6399b);
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #status {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      background: #f3e5f5;
+      border-radius: 12px;
+      color: #7b2cbf;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      color: #777;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <header>
+      <div class="logo">🎨 KahaniToon</div>
+      <div class="tagline">Apni Kahani Ko Zinda Karo</div>
+    </header>
+
+    <div class="card">
+      <label>📖 Apni Story Likhein</label>
+
+      <textarea id="story"
+        placeholder="Yahan apni kahani paste karein...&#10;&#10;Example: Gargi ek buddhimaan ladki thi. Ek din woh Raja Janak ki sabha mein gayi..."></textarea>
+    </div>
+
+    <div class="card">
+      <label>👤 Character Photos Add Karein</label>
+
+      <p style="color:#666;">
+        Aap apni story ke characters ki photos upload kar sakte hain.
+      </p>
+
+      <input
+        type="file"
+        id="photos"
+        accept="image/*"
+        multiple
+      >
+
+      <div class="preview" id="preview"></div>
+    </div>
+
+    <div class="card">
+      <label>🎨 Video Style</label>
+
+      <div class="styles">
+        <div class="style active" onclick="selectStyle(this)">
+          Cartoon
+        </div>
+
+        <div class="style" onclick="selectStyle(this)">
+          3D Animation
+        </div>
+
+        <div class="style" onclick="selectStyle(this)">
+          Anime
+        </div>
+
+        <div class="style" onclick="selectStyle(this)">
+          Storybook
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label>🗣️ Voice</label>
+
+      <select id="voice"
+        style="width:100%; padding:14px; border-radius:10px; border:2px solid #ddd; font-size:16px;">
+
+        <option>Female Narrator</option>
+        <option>Male Narrator</option>
+        <option>Young Voice</option>
+        <option>Deep Story Voice</option>
+
+      </select>
+    </div>
+
+    <div class="card">
+      <button onclick="createVideo()">
+        🎬 CREATE AI VIDEO
+      </button>
+
+      <div id="status">
+        ✨ Story analyze ki ja rahi hai...
+      </div>
+    </div>
+
+    <footer>
+      © 2026 KahaniToon • AI Story Video Maker
+    </footer>
+
+  </div>
+
+  <script>
+
+    const photos = document.getElementById("photos");
+    const preview = document.getElementById("preview");
+
+    photos.addEventListener("change", function () {
+
+      preview.innerHTML = "";
+
+      Array.from(this.files).forEach(file => {
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+
+          const img = document.createElement("img");
+
+          img.src = e.target.result;
+
+          preview.appendChild(img);
+        };
+
+        reader.readAsDataURL(file);
+      });
+
+    });
+
+    function selectStyle(element) {
+
+      document.querySelectorAll(".style").forEach(item => {
+        item.classList.remove("active");
+      });
+
+      element.classList.add("active");
+    }
+
+    function createVideo() {
+
+      const story = document.getElementById("story").value.trim();
+
+      if (!story) {
+        alert("Pehle apni story paste karein.");
+        return;
+      }
+
+      const status = document.getElementById("status");
+
+      status.style.display = "block";
+
+      status.innerHTML =
+        "✨ Story analyze ki ja rahi hai...<br>" +
+        "🎭 Characters identify honge<br>" +
+        "🎬 Scenes create honge<br>" +
+        "🗣️ Voice generate hogi";
+
+      setTimeout(() => {
+
+        status.innerHTML =
+          "🚧 AI Video Engine abhi connect nahi hua hai.<br><br>" +
+          "Next step mein hum AI character, voice aur video generation connect karenge.";
+
+      }, 2000);
+    }
+
+  </script>
+
+</body>
+</html>

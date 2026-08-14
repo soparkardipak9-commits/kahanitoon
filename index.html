@@ -295,7 +295,94 @@
       }, 2000);
     }
 
-  </script>
+  <script>
+  const photos = document.getElementById("photos");
+  const preview = document.getElementById("preview");
+
+  let selectedStyle = "Cartoon";
+
+  photos.addEventListener("change", function () {
+    preview.innerHTML = "";
+
+    Array.from(this.files).forEach(file => {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        preview.appendChild(img);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  });
+
+  function selectStyle(element) {
+    document.querySelectorAll(".style").forEach(item => {
+      item.classList.remove("active");
+    });
+
+    element.classList.add("active");
+    selectedStyle = element.innerText.trim();
+  }
+
+  async function createVideo() {
+    const story = document.getElementById("story").value.trim();
+    const voice = document.getElementById("voice").value;
+
+    if (!story) {
+      alert("Pehle apni story paste karein.");
+      return;
+    }
+
+    const status = document.getElementById("status");
+
+    status.style.display = "block";
+    status.innerHTML =
+      "✨ Story AI ko bheji ja rahi hai...<br>" +
+      "🎭 Characters aur scene prepare ho rahe hain...<br>" +
+      "🎬 Video generate ho raha hai...";
+
+    try {
+      const formData = new FormData();
+
+      formData.append("story", story);
+      formData.append("style", selectedStyle);
+      formData.append("voice", voice);
+
+      if (photos.files.length > 0) {
+        formData.append("photo", photos.files[0]);
+      }
+
+      const response = await fetch("/api/generate-video", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Video generation failed.");
+      }
+
+      status.innerHTML =
+        "🎉 Video ready!<br><br>" +
+        `<a href="${data.videoUrl}" target="_blank"
+           style="display:inline-block;padding:12px 20px;
+           background:#7b2cbf;color:white;border-radius:10px;
+           text-decoration:none;">
+           ▶️ Watch Video
+        </a>`;
+
+    } catch (error) {
+      console.error(error);
+
+      status.innerHTML =
+        "❌ Video generate nahi ho paya.<br><br>" +
+        error.message;
+    }
+  }
+</script>
 
 </body>
 </html>

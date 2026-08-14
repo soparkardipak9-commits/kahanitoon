@@ -123,8 +123,9 @@
       cursor: pointer;
     }
 
-    button:hover {
-      opacity: 0.9;
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
     }
 
     #status {
@@ -138,6 +139,27 @@
       font-weight: bold;
     }
 
+    #videoResult {
+      display: none;
+      margin-top: 20px;
+    }
+
+    #videoResult video {
+      width: 100%;
+      border-radius: 15px;
+      background: #000;
+    }
+
+    .watchButton {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 20px;
+      background: #7b2cbf;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+    }
+
     footer {
       text-align: center;
       color: #777;
@@ -148,240 +170,307 @@
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <header>
-      <div class="logo">🎨 KahaniToon</div>
-      <div class="tagline">Apni Kahani Ko Zinda Karo</div>
-    </header>
+  <header>
+    <div class="logo">🎨 KahaniToon</div>
+    <div class="tagline">Apni Kahani Ko Zinda Karo</div>
+  </header>
 
-    <div class="card">
-      <label>📖 Apni Story Likhein</label>
+  <div class="card">
 
-      <textarea id="story"
-        placeholder="Yahan apni kahani paste karein...&#10;&#10;Example: Gargi ek buddhimaan ladki thi. Ek din woh Raja Janak ki sabha mein gayi..."></textarea>
-    </div>
+    <label>📖 Apni Story Likhein</label>
 
-    <div class="card">
-      <label>👤 Character Photos Add Karein</label>
+    <textarea
+      id="story"
+      placeholder="Yahan apni kahani paste karein...
 
-      <p style="color:#666;">
-        Aap apni story ke characters ki photos upload kar sakte hain.
-      </p>
-
-      <input
-        type="file"
-        id="photos"
-        accept="image/*"
-        multiple
-      >
-
-      <div class="preview" id="preview"></div>
-    </div>
-
-    <div class="card">
-      <label>🎨 Video Style</label>
-
-      <div class="styles">
-        <div class="style active" onclick="selectStyle(this)">
-          Cartoon
-        </div>
-
-        <div class="style" onclick="selectStyle(this)">
-          3D Animation
-        </div>
-
-        <div class="style" onclick="selectStyle(this)">
-          Anime
-        </div>
-
-        <div class="style" onclick="selectStyle(this)">
-          Storybook
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <label>🗣️ Voice</label>
-
-      <select id="voice"
-        style="width:100%; padding:14px; border-radius:10px; border:2px solid #ddd; font-size:16px;">
-
-        <option>Female Narrator</option>
-        <option>Male Narrator</option>
-        <option>Young Voice</option>
-        <option>Deep Story Voice</option>
-
-      </select>
-    </div>
-
-    <div class="card">
-      <button onclick="createVideo()">
-        🎬 CREATE AI VIDEO
-      </button>
-
-      <div id="status">
-        ✨ Story analyze ki ja rahi hai...
-      </div>
-    </div>
-
-    <footer>
-      © 2026 KahaniToon • AI Story Video Maker
-    </footer>
+Example:
+Ravi ek chhota ladka tha. Ek din woh jungle mein kho gaya. Wahan uski mulaqat ek friendly sher se hui.">
+    </textarea>
 
   </div>
 
-  <script>
+  <div class="card">
 
-    const photos = document.getElementById("photos");
-    const preview = document.getElementById("preview");
+    <label>👤 Character Photos Add Karein</label>
 
-    photos.addEventListener("change", function () {
+    <p style="color:#666;">
+      Character ki photo upload karein. AI video mein is photo ko reference ke roop mein use karega.
+    </p>
 
-      preview.innerHTML = "";
+    <input
+      type="file"
+      id="photos"
+      accept="image/*"
+      multiple
+    >
 
-      Array.from(this.files).forEach(file => {
+    <div class="preview" id="preview"></div>
 
-        const reader = new FileReader();
+  </div>
 
-        reader.onload = function(e) {
+  <div class="card">
 
-          const img = document.createElement("img");
+    <label>🎨 Video Style</label>
 
-          img.src = e.target.result;
+    <div class="styles">
 
-          preview.appendChild(img);
-        };
+      <div class="style active" onclick="selectStyle(this)">
+        Cartoon
+      </div>
 
-        reader.readAsDataURL(file);
-      });
+      <div class="style" onclick="selectStyle(this)">
+        3D Animation
+      </div>
 
-    });
+      <div class="style" onclick="selectStyle(this)">
+        Anime
+      </div>
 
-    function selectStyle(element) {
+      <div class="style" onclick="selectStyle(this)">
+        Storybook
+      </div>
 
-      document.querySelectorAll(".style").forEach(item => {
-        item.classList.remove("active");
-      });
+    </div>
 
-      element.classList.add("active");
-    }
+  </div>
 
-    function createVideo() {
+  <div class="card">
 
-      const story = document.getElementById("story").value.trim();
+    <label>🗣️ Voice</label>
 
-      if (!story) {
-        alert("Pehle apni story paste karein.");
-        return;
-      }
+    <select
+      id="voice"
+      style="width:100%; padding:14px; border-radius:10px; border:2px solid #ddd; font-size:16px;"
+    >
 
-      const status = document.getElementById("status");
+      <option>Female Narrator</option>
+      <option>Male Narrator</option>
+      <option>Young Voice</option>
+      <option>Deep Story Voice</option>
 
-      status.style.display = "block";
+    </select>
 
-      status.innerHTML =
-        "✨ Story analyze ki ja rahi hai...<br>" +
-        "🎭 Characters identify honge<br>" +
-        "🎬 Scenes create honge<br>" +
-        "🗣️ Voice generate hogi";
+  </div>
 
-      setTimeout(() => {
+  <div class="card">
 
-        status.innerHTML =
-          "🚧 AI Video Engine abhi connect nahi hua hai.<br><br>" +
-          "Next step mein hum AI character, voice aur video generation connect karenge.";
+    <button id="createButton" onclick="createVideo()">
+      🎬 CREATE AI VIDEO
+    </button>
 
-      }, 2000);
-    }
+    <div id="status"></div>
 
-  <script>
+    <div id="videoResult">
+
+      <video id="generatedVideo" controls></video>
+
+      <a
+        id="watchButton"
+        class="watchButton"
+        target="_blank"
+        rel="noopener"
+      >
+        ▶️ Watch Video
+      </a>
+
+    </div>
+
+  </div>
+
+  <footer>
+    © 2026 KahaniToon • AI Story Video Maker
+  </footer>
+
+</div>
+
+<script>
+
   const photos = document.getElementById("photos");
   const preview = document.getElementById("preview");
 
   let selectedStyle = "Cartoon";
 
   photos.addEventListener("change", function () {
+
     preview.innerHTML = "";
 
     Array.from(this.files).forEach(file => {
+
       const reader = new FileReader();
 
-      reader.onload = function (e) {
+      reader.onload = function(e) {
+
         const img = document.createElement("img");
+
         img.src = e.target.result;
+
         preview.appendChild(img);
+
       };
 
       reader.readAsDataURL(file);
+
     });
+
   });
 
+
   function selectStyle(element) {
+
     document.querySelectorAll(".style").forEach(item => {
+
       item.classList.remove("active");
+
     });
 
     element.classList.add("active");
-    selectedStyle = element.innerText.trim();
+
+    selectedStyle = element.textContent.trim();
+
   }
 
+
   async function createVideo() {
-    const story = document.getElementById("story").value.trim();
-    const voice = document.getElementById("voice").value;
+
+    const story =
+      document.getElementById("story").value.trim();
+
+    const voice =
+      document.getElementById("voice").value;
+
+    const button =
+      document.getElementById("createButton");
+
+    const status =
+      document.getElementById("status");
+
+    const videoResult =
+      document.getElementById("videoResult");
+
+    const video =
+      document.getElementById("generatedVideo");
+
+    const watchButton =
+      document.getElementById("watchButton");
+
 
     if (!story) {
+
       alert("Pehle apni story paste karein.");
+
       return;
+
     }
 
-    const status = document.getElementById("status");
+
+    button.disabled = true;
+
+    videoResult.style.display = "none";
 
     status.style.display = "block";
+
     status.innerHTML =
-      "✨ Story AI ko bheji ja rahi hai...<br>" +
-      "🎭 Characters aur scene prepare ho rahe hain...<br>" +
-      "🎬 Video generate ho raha hai...";
+      "✨ Story AI ko bheji ja rahi hai...<br><br>" +
+      "🎭 Characters prepare ho rahe hain...<br>" +
+      "🎬 AI video generate ho raha hai...<br><br>" +
+      "⏳ Please wait...";
+
 
     try {
+
       const formData = new FormData();
 
-      formData.append("story", story);
-      formData.append("style", selectedStyle);
-      formData.append("voice", voice);
+      formData.append(
+        "story",
+        story
+      );
+
+      formData.append(
+        "style",
+        selectedStyle
+      );
+
+      formData.append(
+        "voice",
+        voice
+      );
+
 
       if (photos.files.length > 0) {
-        formData.append("photo", photos.files[0]);
+
+        formData.append(
+          "photo",
+          photos.files[0]
+        );
+
       }
 
-      const response = await fetch("/api/generate-video", {
-        method: "POST",
-        body: formData
-      });
 
-      const data = await response.json();
+      const response =
+        await fetch(
+          "/api/generate-video",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+
+
+      const data =
+        await response.json();
+
 
       if (!response.ok) {
-        throw new Error(data.error || "Video generation failed.");
+
+        throw new Error(
+          data.error ||
+          "Video generation failed."
+        );
+
       }
 
+
+      if (!data.videoUrl) {
+
+        throw new Error(
+          "Video URL nahi mila."
+        );
+
+      }
+
+
+      video.src =
+        data.videoUrl;
+
+      watchButton.href =
+        data.videoUrl;
+
+      videoResult.style.display =
+        "block";
+
       status.innerHTML =
-        "🎉 Video ready!<br><br>" +
-        `<a href="${data.videoUrl}" target="_blank"
-           style="display:inline-block;padding:12px 20px;
-           background:#7b2cbf;color:white;border-radius:10px;
-           text-decoration:none;">
-           ▶️ Watch Video
-        </a>`;
+        "🎉 <strong>Video Ready!</strong><br><br>" +
+        "Neeche video play karein.";
+
 
     } catch (error) {
+
       console.error(error);
 
       status.innerHTML =
         "❌ Video generate nahi ho paya.<br><br>" +
         error.message;
+
+    } finally {
+
+      button.disabled = false;
+
     }
+
   }
+
 </script>
 
 </body>
